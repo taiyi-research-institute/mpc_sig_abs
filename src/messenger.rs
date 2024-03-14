@@ -8,7 +8,7 @@ use serde::{de::DeserializeOwned, Serialize};
 
 #[async_trait]
 pub trait Messenger {
-    type E: Display + Send + Sync + 'static;
+    type ErrorType: Display + Send + Sync + 'static;
 
     async fn send<T>(
         &self,
@@ -16,11 +16,11 @@ pub trait Messenger {
         src: MpcAddr,
         dst: MpcAddr,
         obj: &T,
-    ) -> Result<(), Self::E>
+    ) -> Result<(), Self::ErrorType>
     where
         T: Serialize + DeserializeOwned + Send + Sync;
 
-    async fn receive<T>(&self, topic: &str, src: MpcAddr, dst: MpcAddr) -> Result<T, Self::E>
+    async fn receive<T>(&self, topic: &str, src: MpcAddr, dst: MpcAddr) -> Result<T, Self::ErrorType>
     where
         T: Serialize + DeserializeOwned + Send + Sync;
 
@@ -30,7 +30,7 @@ pub trait Messenger {
         src: MpcAddr,
         dsts: &BTreeSet<MpcAddr>,
         obj: &T,
-    ) -> Result<(), Self::E>
+    ) -> Result<(), Self::ErrorType>
     where
         T: Serialize + DeserializeOwned + Send + Sync;
 
@@ -39,7 +39,7 @@ pub trait Messenger {
         topic: &str,
         srcs: &BTreeSet<MpcAddr>,
         dst: MpcAddr,
-    ) -> Result<BTreeMap<MpcAddr, T>, Self::E>
+    ) -> Result<BTreeMap<MpcAddr, T>, Self::ErrorType>
     where
         T: Serialize + DeserializeOwned + Send + Sync;
 }
