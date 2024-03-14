@@ -1,5 +1,5 @@
 use std::{
-    collections::{HashMap, HashSet},
+    collections::{BTreeMap, BTreeSet},
     ops::{Add, Mul},
 };
 
@@ -21,11 +21,11 @@ where
         + std::ops::Add<Output = PointType>
         + std::ops::Mul<ScalarType, Output = PointType>,
 {
-    pub ui_dict: HashMap<u16, ScalarType>,
-    pub xi_dict: HashMap<u16, ScalarType>,
-    pub vss_com_grid: HashMap<u16, HashMap<MpcAddr, Vec<PointType>>>, // (group, member(poly), coef)
+    pub ui_dict: BTreeMap<u16, ScalarType>,
+    pub xi_dict: BTreeMap<u16, ScalarType>,
+    pub vss_com_grid: BTreeMap<u16, BTreeMap<MpcAddr, Vec<PointType>>>, // (group, member(poly), coef)
 
-    pub ids: HashSet<MpcAddr>,
+    pub ids: BTreeSet<MpcAddr>,
     pub aux: Option<Vec<u8>>,
 }
 

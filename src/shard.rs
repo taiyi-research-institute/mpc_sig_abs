@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::ops::{Add, Mul};
 
 use erreur::*;
@@ -22,7 +22,7 @@ where
     /// signing key
     pub x_i: ScalarType,
     /// Commitment to the polynomial coefficients for each `member_id` within the same `group_id`.
-    pub vss_com_dict: HashMap<u16, Vec<PointType>>,
+    pub vss_com_dict: BTreeMap<u16, Vec<PointType>>,
     /// `(group_id, member_id)` of current shard.
     pub id: u16,
     /// Auxiliary data for the shard.
