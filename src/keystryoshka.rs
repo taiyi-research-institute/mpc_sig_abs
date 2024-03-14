@@ -8,8 +8,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::MpcAddr;
 
+/// Matryoshka keystore
 #[derive(Clone, Debug, Deserialize, Serialize, Default)]
-pub struct MultiShard<ScalarType, PointType>
+pub struct Keystryoshka<ScalarType, PointType>
 where
     ScalarType: Clone
         + Default // Zero
@@ -17,7 +18,7 @@ where
         + Mul<Output = ScalarType>
         + Mul<PointType, Output = PointType>,
     PointType: Clone
-        + Default // Identity
+        + Default // Zero, aka Identity, aka Infinity
         + std::ops::Add<Output = PointType>
         + std::ops::Mul<ScalarType, Output = PointType>,
 {
@@ -29,7 +30,7 @@ where
     pub aux: Option<Vec<u8>>,
 }
 
-impl<ScalarType, PointType> MultiShard<ScalarType, PointType>
+impl<ScalarType, PointType> Keystryoshka<ScalarType, PointType>
 where
     ScalarType: Clone
         + Default // Zero
@@ -37,7 +38,7 @@ where
         + Mul<Output = ScalarType>
         + Mul<PointType, Output = PointType>,
     PointType: Clone
-        + Default // Identity
+        + Default // Zero, aka Identity, aka Infinity
         + std::ops::Add<PointType, Output = PointType>
         + std::ops::Mul<ScalarType, Output = PointType>,
 {

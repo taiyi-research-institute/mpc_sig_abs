@@ -4,8 +4,10 @@ use std::ops::{Add, Mul};
 use erreur::*;
 use serde::{Deserialize, Serialize};
 
+use crate::MpcAddr;
+
 #[derive(Clone, Debug, Deserialize, Serialize, Default)]
-pub struct KeyStore<ScalarType, PointType>
+pub struct Keystore<ScalarType, PointType>
 where
     ScalarType: Clone
         + Default // Zero
@@ -13,7 +15,7 @@ where
         + Mul<Output = ScalarType>
         + Mul<PointType, Output = PointType>,
     PointType: Clone
-        + Default // Identity
+        + Default // Zero, aka Identity, aka Infinity
         + std::ops::Add<Output = PointType>
         + std::ops::Mul<ScalarType, Output = PointType>,
 {
@@ -22,14 +24,14 @@ where
     /// signing key
     pub x_i: ScalarType,
     /// Commitment to the polynomial coefficients for each `member_id` within the same `group_id`.
-    pub vss_com_dict: BTreeMap<u16, Vec<PointType>>,
+    pub vss_com_dict: BTreeMap<MpcAddr, Vec<PointType>>,
     /// `(group_id, member_id)` of current shard.
-    pub id: u16,
+    pub id: MpcAddr,
     /// Auxiliary data for the shard.
     pub aux: Option<Vec<u8>>,
 }
 
-impl<ScalarType, PointType> KeyStore<ScalarType, PointType>
+impl<ScalarType, PointType> Keystore<ScalarType, PointType>
 where
     ScalarType: Clone
         + Default // Zero
@@ -37,7 +39,7 @@ where
         + Mul<Output = ScalarType>
         + Mul<PointType, Output = PointType>,
     PointType: Clone
-        + Default // Identity
+        + Default // Zero, aka Identity, aka Infinity
         + std::ops::Add<PointType, Output = PointType>
         + std::ops::Mul<ScalarType, Output = PointType>,
 {
