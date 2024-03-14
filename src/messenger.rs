@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, BTreeSet}; // To ensure that keys are in deterministic order.
 use std::fmt::Display;
 
 use super::MpcAddr;
@@ -28,7 +28,7 @@ pub trait Messenger {
         &self,
         topic: &str,
         src: MpcAddr,
-        dsts: &HashSet<MpcAddr>,
+        dsts: &BTreeSet<MpcAddr>,
         obj: &T,
     ) -> Result<(), Self::E>
     where
@@ -37,9 +37,9 @@ pub trait Messenger {
     async fn gather<T>(
         &self,
         topic: &str,
-        srcs: &HashSet<MpcAddr>,
+        srcs: &BTreeSet<MpcAddr>,
         dst: MpcAddr,
-    ) -> Result<HashMap<MpcAddr, T>, Self::E>
+    ) -> Result<BTreeMap<MpcAddr, T>, Self::E>
     where
         T: Serialize + DeserializeOwned + Send + Sync;
 }
