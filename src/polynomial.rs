@@ -28,6 +28,8 @@ where
     y
 }
 
+/// Evaluate the value of "Lagrange basis polynomial" at $x=0$, for the `id`-th sample point.
+/// Such value is often written as $\lambda_\mathtt{id}$.
 pub fn lagrange_lambda(
     id: MpcAddr,
     signers: BTreeSet<MpcAddr>,
