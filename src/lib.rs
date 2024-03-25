@@ -4,9 +4,6 @@ pub use aes_gcm::*;
 mod messenger;
 pub use messenger::*;
 
-mod polynomial;
-pub use polynomial::*;
-
 mod keystore;
 pub use keystore::*;
 
