@@ -14,14 +14,14 @@ pub struct AEAD {
 
 /// Encrypts a plaintext using AES-GCM.
 ///
-/// * `key` - passkey, passphrase, password
+/// * `key` - passkey. Only the first 32 bytes are used.
 /// * `pt` - plaintext
 /// * `aad` - additional associated data
 pub fn aes_encrypt(key: &[u8], pt: &[u8], aad: &[u8]) -> Resultat<AEAD> {
     // create cipher
-    let mut aes_key: [u8; 32] = [0; 32];
-    let begin = std::cmp::max(0, 32 - key.len());
-    aes_key[begin..].copy_from_slice(key);
+    let mut aes_key = [255u8; 32];
+    let end = std::cmp::min(32, key.len());
+    aes_key[..end].copy_from_slice(&key[..end]);
     let aes_key: &Key<Aes256Gcm> = key.into();
     let cipher = Aes256Gcm::new(aes_key);
 
@@ -46,14 +46,14 @@ pub fn aes_encrypt(key: &[u8], pt: &[u8], aad: &[u8]) -> Resultat<AEAD> {
 
 /// Encrypts a plaintext using AES-GCM.
 ///
-/// * `key` - passkey, passphrase, password
+/// * `key` - passkey. Only the first 32 bytes are used.
 /// * `pt` - plaintext
 /// * `aad` - additional associated data
 pub fn aes_decrypt(key: &[u8], ct: &AEAD, aad: &[u8]) -> Resultat<Vec<u8>> {
     // create cipher
-    let mut aes_key: [u8; 32] = [0; 32];
-    let begin = std::cmp::max(0, 32 - key.len());
-    aes_key[begin..].copy_from_slice(key);
+    let mut aes_key = [255u8; 32];
+    let end = std::cmp::min(32, key.len());
+    aes_key[..end].copy_from_slice(&key[..end]);
     let aes_key: &Key<Aes256Gcm> = key.into();
     let cipher = Aes256Gcm::new(aes_key);
 
