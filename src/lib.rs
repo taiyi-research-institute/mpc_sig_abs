@@ -1,3 +1,6 @@
+mod aes_gcm;
+pub use aes_gcm::*;
+
 mod messenger;
 pub use messenger::*;
 
