@@ -22,7 +22,7 @@ pub fn aes_encrypt(key: &[u8], pt: &[u8], aad: &[u8]) -> Resultat<AEAD> {
     let mut aes_key = [255u8; 32];
     let end = std::cmp::min(32, key.len());
     aes_key[..end].copy_from_slice(&key[..end]);
-    let aes_key: &Key<Aes256Gcm> = key.into();
+    let aes_key: &Key<Aes256Gcm> = &aes_key.into();
     let cipher = Aes256Gcm::new(aes_key);
 
     // generate nonce
@@ -54,7 +54,7 @@ pub fn aes_decrypt(key: &[u8], ct: &AEAD, aad: &[u8]) -> Resultat<Vec<u8>> {
     let mut aes_key = [255u8; 32];
     let end = std::cmp::min(32, key.len());
     aes_key[..end].copy_from_slice(&key[..end]);
-    let aes_key: &Key<Aes256Gcm> = key.into();
+    let aes_key: &Key<Aes256Gcm> = &aes_key.into();
     let cipher = Aes256Gcm::new(aes_key);
 
     // prepare nonce and payload
@@ -78,13 +78,14 @@ mod tests {
     #[test]
     fn test_aes_gcm() {
         let mut rng = OsRng;
-        let mut key = [0u8; 32];
-        rng.fill_bytes(&mut key);
-        let pt = "Je ne veux pas travailler, je ne veux pas déjeuner, je veux seulement oublier, et puis je fume.".as_bytes();
-        let aad = "Sympathique".as_bytes();
-
-        let ct = aes_encrypt(&key, pt, aad).unwrap();
-        let pt2 = aes_decrypt(&key, &ct, aad).unwrap();
-        assert_eq!(pt, pt2.as_slice());
+        for n in [29, 32, 37] {
+            let mut key = vec![0u8; n];
+            rng.fill_bytes(&mut key);
+            let pt = "Je ne veux pas travailler, je ne veux pas déjeuner, je veux seulement oublier, et puis je fume.".as_bytes();
+            let aad = "Sympathique".as_bytes();
+            let ct = aes_encrypt(&key, pt, aad).unwrap();
+            let pt2 = aes_decrypt(&key, &ct, aad).unwrap();
+            assert_eq!(pt, pt2.as_slice());
+        }
     }
 }
