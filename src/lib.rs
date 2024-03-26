@@ -1,14 +1,13 @@
 mod aes_gcm;
-pub use aes_gcm::*;
-
-mod messenger;
-pub use messenger::*;
-
 mod keystore;
-pub use keystore::*;
-
-mod mpc_addr;
-pub use mpc_addr::*;
-
 mod keystryoshka;
+mod messenger;
+mod mpc_addr;
+mod pickle;
+
+pub use aes_gcm::*;
+pub use keystore::*;
 pub use keystryoshka::*;
+pub use messenger::*;
+pub use mpc_addr::*;
+pub use pickle::*;
