@@ -47,7 +47,7 @@ pub trait BatchMessenger {
     where
         T: Serialize + DeserializeOwned + Send + Sync;
     async fn execute_send(&self) -> Result<(), Self::ErrorType>;
-    async fn clear_send(&self);
+    async fn clear_send(&mut self);
 
     async fn register_receive(
         &self,
@@ -66,5 +66,5 @@ pub trait BatchMessenger {
     ) -> Result<T, Self::ErrorType>
     where
         T: Serialize + DeserializeOwned + Send + Sync;
-    async fn clear_receive(&self);
+    async fn clear_receive(&mut self);
 }
