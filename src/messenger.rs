@@ -33,16 +33,38 @@ pub trait Messenger {
 }
 
 #[async_trait]
-pub trait BatchMessenger: Messenger {
-    /// Super::send() registers the messages to send, in some inner data structure, say, `logs`.
-    /// Self::execute_send(&self) sends the messages.
+pub trait BatchMessenger {
+    type ErrorType: Display + Send + Sync + 'static;
+
+    async fn register_send<T>(
+        &self,
+        topic: &str,
+        src: MpcAddr,
+        dst: MpcAddr,
+        seq: usize,
+        obj: &T,
+    ) -> Result<(), Self::ErrorType>
+    where
+        T: Serialize + DeserializeOwned + Send + Sync;
     async fn execute_send(&self) -> Result<(), Self::ErrorType>;
+    async fn clear_send(&self);
 
-    /// Self::execute_receive(&self) receive the messages with indices given by Super::send().
-    /// The received messages are stored in `logs`.
-    /// Then, call Super::receive() to get the messages.
+    async fn register_receive(
+        &self,
+        topic: &str,
+        src: MpcAddr,
+        dst: MpcAddr,
+        seq: usize,
+    ) -> Result<(), Self::ErrorType>;
     async fn execute_receive(&self) -> Result<(), Self::ErrorType>;
-
-    /// Clear the `logs`.
-    async fn clear(&self) -> Result<(), Self::ErrorType>;
+    async fn unpack_receive<T>(
+        &self,
+        topic: &str,
+        src: MpcAddr,
+        dst: MpcAddr,
+        seq: usize,
+    ) -> Result<T, Self::ErrorType>
+    where
+        T: Serialize + DeserializeOwned + Send + Sync;
+    async fn clear_receive(&self);
 }
