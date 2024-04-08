@@ -11,7 +11,7 @@ pub trait Messenger {
     type ErrorType: Display + Send + Sync + 'static;
 
     async fn send<T>(
-        &self,
+        &mut self,
         topic: &str,
         src: MpcAddr,
         dst: MpcAddr,
@@ -22,7 +22,7 @@ pub trait Messenger {
         T: Serialize + DeserializeOwned + Send + Sync;
 
     async fn receive<T>(
-        &self,
+        &mut self,
         topic: &str,
         src: MpcAddr,
         dst: MpcAddr,
@@ -46,7 +46,7 @@ pub trait BatchMessenger {
     ) -> Result<(), Self::ErrorType>
     where
         T: Serialize + DeserializeOwned + Send + Sync;
-    async fn execute_send(&self) -> Result<(), Self::ErrorType>;
+    async fn execute_send(&mut self) -> Result<(), Self::ErrorType>;
     async fn clear_send(&mut self);
 
     async fn register_receive(
@@ -58,7 +58,7 @@ pub trait BatchMessenger {
     ) -> Result<(), Self::ErrorType>;
     async fn execute_receive(&mut self) -> Result<(), Self::ErrorType>;
     async fn unpack_receive<T>(
-        &self,
+        &mut self,
         topic: &str,
         src: MpcAddr,
         dst: MpcAddr,
