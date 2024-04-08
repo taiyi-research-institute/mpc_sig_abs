@@ -15,14 +15,8 @@ pub trait Messenger {
         topic: &str,
         src: MpcAddr,
         dst: MpcAddr,
+        seq: usize,
         obj: &T,
-    ) -> Result<(), Self::ErrorType>
-    where
-        T: Serialize + DeserializeOwned + Send + Sync;
-
-    async fn batch_send<T>(
-        &self,
-        batch: &Vec<(String, MpcAddr, MpcAddr, T)>,
     ) -> Result<(), Self::ErrorType>
     where
         T: Serialize + DeserializeOwned + Send + Sync;
@@ -32,33 +26,23 @@ pub trait Messenger {
         topic: &str,
         src: MpcAddr,
         dst: MpcAddr,
+        seq: usize,
     ) -> Result<T, Self::ErrorType>
     where
         T: Serialize + DeserializeOwned + Send + Sync;
+}
 
-    async fn batch_receive<T>(
-        &self,
-        batch: &Vec<(String, MpcAddr, MpcAddr)>,
-    ) -> Result<Vec<(String, MpcAddr, MpcAddr, T)>, Self::ErrorType>
-    where
-        T: Serialize + DeserializeOwned + Send + Sync;
+#[async_trait]
+pub trait BatchMessenger: Messenger {
+    /// Super::send() registers the messages to send, in some inner data structure, say, `logs`.
+    /// Self::execute_send(&self) sends the messages.
+    async fn execute_send(&self) -> Result<(), Self::ErrorType>;
 
-    async fn scatter<T>(
-        &self,
-        topic: &str,
-        src: MpcAddr,
-        dsts: &BTreeSet<MpcAddr>,
-        obj: &T,
-    ) -> Result<(), Self::ErrorType>
-    where
-        T: Serialize + DeserializeOwned + Send + Sync;
+    /// Self::execute_receive(&self) receive the messages with indices given by Super::send().
+    /// The received messages are stored in `logs`.
+    /// Then, call Super::receive() to get the messages.
+    async fn execute_receive(&self) -> Result<(), Self::ErrorType>;
 
-    async fn gather<T>(
-        &self,
-        topic: &str,
-        srcs: &BTreeSet<MpcAddr>,
-        dst: MpcAddr,
-    ) -> Result<BTreeMap<MpcAddr, T>, Self::ErrorType>
-    where
-        T: Serialize + DeserializeOwned + Send + Sync;
+    /// Clear the `logs`.
+    async fn clear(&self) -> Result<(), Self::ErrorType>;
 }
