@@ -20,7 +20,26 @@ pub trait Messenger {
     where
         T: Serialize + DeserializeOwned + Send + Sync;
 
-    async fn receive<T>(&self, topic: &str, src: MpcAddr, dst: MpcAddr) -> Result<T, Self::ErrorType>
+    async fn batch_send<T>(
+        &self,
+        batch: &Vec<(String, MpcAddr, MpcAddr, T)>,
+    ) -> Result<(), Self::ErrorType>
+    where
+        T: Serialize + DeserializeOwned + Send + Sync;
+
+    async fn receive<T>(
+        &self,
+        topic: &str,
+        src: MpcAddr,
+        dst: MpcAddr,
+    ) -> Result<T, Self::ErrorType>
+    where
+        T: Serialize + DeserializeOwned + Send + Sync;
+
+    async fn batch_receive<T>(
+        &self,
+        batch: &Vec<(String, MpcAddr, MpcAddr)>,
+    ) -> Result<Vec<(String, MpcAddr, MpcAddr, T)>, Self::ErrorType>
     where
         T: Serialize + DeserializeOwned + Send + Sync;
 
