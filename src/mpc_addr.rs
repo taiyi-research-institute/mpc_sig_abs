@@ -12,7 +12,7 @@ use zeroize::Zeroize;
     Debug,
 )]
 /// ID of vss shard
-pub struct MpcAddr(u32);
+pub struct MpcAddr(u64);
 
 impl MpcAddr {
     /// High 16 bits
@@ -27,11 +27,11 @@ impl MpcAddr {
 
     /// Create a new MpcPeerId from group and member id
     pub fn new(group_id: u16, member_id: u16) -> Self {
-        let val = (u32::from(group_id) << 16) | u32::from(member_id);
+        let val = (u64::from(group_id) << 16) | u64::from(member_id);
         MpcAddr(val)
     }
 
-    pub fn to_be_bytes(&self) -> [u8; 4] {
+    pub fn to_be_bytes(&self) -> [u8; 8] {
         self.0.to_be_bytes()
     }
 
@@ -43,7 +43,7 @@ impl MpcAddr {
         Self::new(group_id, 0)
     }
 
-    pub fn as_primitive(&self) -> u32 {
+    pub fn as_primitive(&self) -> u64 {
         self.0
     }
 
@@ -59,12 +59,12 @@ impl MpcAddr {
     }
 }
 
-impl From<u32> for MpcAddr {
-    fn from(x: u32) -> Self {
+impl From<u64> for MpcAddr {
+    fn from(x: u64) -> Self {
         MpcAddr(x)
     }
 }
-impl From<MpcAddr> for u32 {
+impl From<MpcAddr> for u64 {
     fn from(x: MpcAddr) -> Self {
         x.0
     }
