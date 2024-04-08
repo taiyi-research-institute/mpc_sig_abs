@@ -37,7 +37,7 @@ pub trait BatchMessenger {
     type ErrorType: Display + Send + Sync + 'static;
 
     async fn register_send<T>(
-        &self,
+        &mut self,
         topic: &str,
         src: MpcAddr,
         dst: MpcAddr,
@@ -50,13 +50,13 @@ pub trait BatchMessenger {
     async fn clear_send(&mut self);
 
     async fn register_receive(
-        &self,
+        &mut self,
         topic: &str,
         src: MpcAddr,
         dst: MpcAddr,
         seq: usize,
     ) -> Result<(), Self::ErrorType>;
-    async fn execute_receive(&self) -> Result<(), Self::ErrorType>;
+    async fn execute_receive(&mut self) -> Result<(), Self::ErrorType>;
     async fn unpack_receive<T>(
         &self,
         topic: &str,
