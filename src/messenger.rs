@@ -35,7 +35,7 @@ pub trait Messenger {
 pub trait BatchMessenger {
     type ErrorType: Display + Send + Sync + 'static;
 
-    async fn register_send<T>(
+    fn register_send<T>(
         &mut self,
         topic: &str,
         src: MpcAddr,
@@ -46,9 +46,9 @@ pub trait BatchMessenger {
     where
         T: Serialize + DeserializeOwned + Send + Sync;
     async fn execute_send(&mut self) -> Result<(), Self::ErrorType>;
-    async fn clear_send(&mut self);
+    fn clear_send(&mut self);
 
-    async fn register_receive(
+    fn register_receive(
         &mut self,
         topic: &str,
         src: MpcAddr,
@@ -56,7 +56,7 @@ pub trait BatchMessenger {
         seq: usize,
     ) -> Result<(), Self::ErrorType>;
     async fn execute_receive(&mut self) -> Result<(), Self::ErrorType>;
-    async fn unpack_receive<T>(
+    fn unpack_receive<T>(
         &mut self,
         topic: &str,
         src: MpcAddr,
@@ -65,9 +65,9 @@ pub trait BatchMessenger {
     ) -> Result<T, Self::ErrorType>
     where
         T: Serialize + DeserializeOwned + Send + Sync;
-    async fn clear_receive(&mut self);
+    fn clear_receive(&mut self);
 
-    async fn register<T>(
+    fn register<T>(
         &mut self,
         topic: &str,
         src: MpcAddr,
@@ -78,8 +78,8 @@ pub trait BatchMessenger {
     where
         T: Serialize + DeserializeOwned + Send + Sync,
     {
-        self.register_send(topic, src, dst, seq, obj).await?;
-        self.register_receive(topic, dst, src, seq).await?;
+        self.register_send(topic, src, dst, seq, obj)?;
+        self.register_receive(topic, dst, src, seq)?;
         Ok(())
     }
 
@@ -89,8 +89,8 @@ pub trait BatchMessenger {
         Ok(())
     }
 
-    async fn clear(&mut self) {
-        self.clear_send().await;
-        self.clear_receive().await;
+    fn clear(&mut self) {
+        self.clear_send();
+        self.clear_receive();
     }
 }
